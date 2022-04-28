@@ -1,20 +1,27 @@
 class Solution {
 public:
     vector<int> fullBloomFlowers(vector<vector<int>>& flowers, vector<int>& persons) {
-        vector<int>ans;
-        vector<int>start,end;
-        for(auto flower:flowers)
+        int n=persons.size();
+        vector<pair<int,int>>v;
+        for(int i=0;i<n;i++)
+            v.push_back({persons[i],i});
+        sort(v.begin(),v.end());
+        sort(flowers.begin(),flowers.end());
+        vector<int>ans(n);
+        priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>>pq;
+        int index=0;
+        for(int i=0;i<n;i++)
         {
-            start.push_back(flower[0]);
-            end.push_back(flower[1]);
-        }
-        sort(start.begin(),start.end());
-        sort(end.begin(),end.end());
-        for(int i=0;i<persons.size();i++)
-        {
-            int started=upper_bound(start.begin(),start.end(),persons[i])-start.begin();
-            int ended=lower_bound(end.begin(),end.end(),persons[i])-end.begin();
-            ans.push_back(started-ended);
+            while(index<flowers.size() && flowers[index][0]<=v[i].first)
+            {
+                pq.push({flowers[index][1],flowers[index][0]});
+                index++;
+            }
+            while(!pq.empty() && pq.top().first<v[i].first)
+                pq.pop();
+            
+            ans[v[i].second]=pq.size();
+            
         }
         return ans;
     }
